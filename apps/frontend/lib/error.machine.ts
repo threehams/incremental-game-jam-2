@@ -1,26 +1,33 @@
-import { createMachine } from "@xstate/compiled";
+import { createMachine, createSchema } from "xstate";
 
-type Context = {};
-type Event = { type: "ERROR" } | { type: "CONFIRM" } | { type: "RESET" };
-
-export const errorMachine = createMachine<Context, Event, "error">({
-  id: "error",
-  initial: "running",
-  states: {
-    running: {
-      on: {
-        ERROR: { target: "error" },
-      },
+export const errorMachine = createMachine(
+  {
+    schema: {
+      actions: createSchema<{ type: "RESET" }>(),
+      context: createSchema(),
+      events: createSchema<{ type: "CONFIRM" } | { type: "RESET" }>(),
     },
-    error: {
-      on: {
-        RESET: { target: "needsConfirmation" },
+    id: "error",
+    initial: "error",
+    states: {
+      error: {
+        on: {
+          RESET: { target: "needsConfirmation" },
+        },
       },
-    },
-    needsConfirmation: {
-      on: {
-        CONFIRM: { target: "running" },
+      needsConfirmation: {
+        on: {
+          CONFIRM: { actions: "reset" },
+        },
       },
     },
   },
-});
+  {
+    actions: {
+      reset: () => {
+        localStorage.clear();
+        location.reload();
+      },
+    },
+  },
+);

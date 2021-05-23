@@ -13,6 +13,7 @@ export const Button = ({
   className,
   disabled,
   onClick,
+  style,
 }: ButtonProps) => {
   return (
     <button
@@ -26,6 +27,7 @@ export const Button = ({
         "border border-gray-50 border-solid cursor-pointer px-3 relative",
         className,
       )}
+      style={style}
     >
       {children}
     </button>
